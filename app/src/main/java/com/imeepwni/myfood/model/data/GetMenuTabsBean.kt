@@ -8,5 +8,5 @@ package com.imeepwni.myfood.model.data
  * @param retCode 返回码
  */
 data class GetMenuTabsBean(val msg: String,
-                           val result: MenuCategoryInfoBean,
+                           val result: CategoryInfoAndChilds,
                            val retCode: String)

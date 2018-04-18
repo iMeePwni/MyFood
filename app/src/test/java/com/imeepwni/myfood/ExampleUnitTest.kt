@@ -18,7 +18,7 @@ class ExampleUnitTest {
     fun testGetMenuTabsBean() {
         val stringBuilder = StringBuilder()
         File("E:\\MyFood\\app\\src\\test\\java\\com\\imeepwni\\myfood\\data\\getMenuTabsBean").forEachLine {
-            stringBuilder.append(it)
+            stringBuilder.append(it.trim())
         }
         var getMenuTabsBean: GetMenuTabsBean? = null
         try {

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- dialog -->
+    <dimen name="dialog_margin_horizontal">16dp</dimen>
+    <dimen name="dialog_margin_vertical">40dp</dimen>
+</resources>

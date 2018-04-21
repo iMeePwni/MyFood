@@ -2,23 +2,54 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dialog_margin_vertical"
+    android:layout_marginEnd="@dimen/dialog_margin_horizontal"
+    android:layout_marginStart="@dimen/dialog_margin_horizontal"
+    android:layout_marginTop="@dimen/dialog_margin_vertical"
     android:orientation="vertical"
-    tools:context=".view.ui.IndexFragment">
+    tools:context=".view.ui.TabsFragment">
 
     <TextView
         android:id="@+id/tv_tabs_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
+        android:textColor="@color/colorTextPrimaryInvert"
         tools:text="@string/app_name" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorButtonPrimary"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/reset" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/confirm" />
+    </LinearLayout>
+
 </LinearLayout>

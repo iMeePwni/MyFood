@@ -1,13 +1,13 @@
 package com.imeepwni.myfood.view.ui
 
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.imeepwni.myfood.R
-import com.imeepwni.myfood.app.BaseFragment
 import com.imeepwni.myfood.model.net.MobService
 import com.imeepwni.myfood.view.adapter.CategoryAdapter
 import com.orhanobut.logger.Logger
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_index.*
 /**
  * 菜单标签Fragment
  */
-class IndexFragment : BaseFragment() {
+class TabsFragment : DialogFragment() {
 
     private val sectionedRecyclerViewAdapter = SectionedRecyclerViewAdapter()
 
@@ -84,10 +84,12 @@ class IndexFragment : BaseFragment() {
     }
 
     companion object {
+
+        val TAG = TabsFragment::class.java.simpleName
         /**
          * 获取菜单标签Fragment实例
          */
         @JvmStatic
-        fun newInstance() = IndexFragment()
+        fun newInstance() = TabsFragment()
     }
 }

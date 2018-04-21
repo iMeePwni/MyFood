@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!-- https://www.uplabs.com/posts/cooking-steak-cards -->
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#FEA946</color>
+    <color name="colorPrimaryDark">#FEA946</color>
+    <color name="colorAccent">#6ECFFF</color>
+    <color name="colorBackground">#FDFDFC</color>
+    <color name="colorTextPrimary">#303030</color>
 </resources>

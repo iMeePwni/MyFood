@@ -1,11 +1,9 @@
 package com.imeepwni.myfood.model.net
 
 import com.imeepwni.myfood.BuildConfig
+import com.imeepwni.myfood.app.RetrofitWrapper
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
 import io.reactivex.Observable
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -27,11 +25,7 @@ object MobService {
     /**
      * Mob Client
      */
-    private val CLIENT = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .build()!!
+    private val CLIENT = RetrofitWrapper.getBaseUrlRetrofit(BASE_URL)
 
     /**
      * Mob菜谱大全

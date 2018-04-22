@@ -3,10 +3,11 @@
 buildscript {
     // 版本管理
     ext {
-        kotlin_version = '1.2.31'
+        kotlin_version = '1.2.30'
         support_version = '27.1.0'
     }
     repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         google()
         jcenter()
     }
@@ -21,6 +22,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
         google()
         jcenter()
     }

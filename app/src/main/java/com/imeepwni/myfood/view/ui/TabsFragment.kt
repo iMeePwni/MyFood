@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.imeepwni.myfood.model.repositry.TabsLab
 import com.imeepwni.myfood.view.adapter.CategoryAdapter
@@ -28,7 +28,19 @@ class TabsFragment : DialogFragment() {
                 .setNeutralButton("重置", { _, _ -> Logger.d("you click reset") })
                 .setPositiveButton("确定", { _, _ -> Logger.d("you click confirm") })
         recyclerView.run {
-            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            val gridLayoutManager = GridLayoutManager(activity, 3, GridLayoutManager.VERTICAL, false)
+            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    sectionedRecyclerViewAdapter.getItemViewType(position).let {
+                        return when (it) {
+                            SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER -> 3
+//                            SectionedRecyclerViewAdapter.VIEW_TYPE_ITEM_LOADED -> sectionedRecyclerViewAdapter.getSectionForPosition(position).get
+                            else -> 1
+                        }
+                    }
+                }
+            }
+            layoutManager = gridLayoutManager
             adapter = sectionedRecyclerViewAdapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }

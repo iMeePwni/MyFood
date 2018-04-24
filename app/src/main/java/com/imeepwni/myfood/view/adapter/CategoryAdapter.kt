@@ -3,6 +3,7 @@ package com.imeepwni.myfood.view.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
+import com.imeepwni.myfood.R
 import com.imeepwni.myfood.model.data.CategoryInfo
 import com.imeepwni.myfood.model.data.CategoryInfoAndChilds
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
@@ -82,7 +83,7 @@ class CategoryAdapter private constructor(parameters: SectionParameters, categor
         fun newInstance(categoryInfoAndChilds: CategoryInfoAndChilds): CategoryAdapter {
             val sectionParameters = SectionParameters.builder().apply {
                 headerResourceId(android.R.layout.preference_category)
-                itemResourceId(android.R.layout.simple_list_item_1)
+                itemResourceId(R.layout.item_menu_tab)
             }.build()
             return CategoryAdapter(sectionParameters, categoryInfoAndChilds)
         }

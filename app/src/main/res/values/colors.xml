@@ -6,5 +6,5 @@
     <color name="colorBackground">#FDFDFC</color>
     <color name="colorButtonPrimary">#FFDE29</color>
     <color name="colorTextPrimary">#303030</color>
-    <color name="colorTextPrimaryInvert">#FDFDFC</color>
+    <color name="colorTextPrimaryInvert">#ffffff</color>
 </resources>

@@ -50,7 +50,7 @@ class CategoryAdapter private constructor(parameters: SectionParameters, categor
 
         fun bind(categoryInfoAndChilds: CategoryInfoAndChilds) {
             // 菜单标签名称
-            view.findViewById<TextView>(android.R.id.text1).apply {
+            view.findViewById<TextView>(R.id.tv_name).apply {
                 text = categoryInfoAndChilds.categoryInfo.name
             }
         }

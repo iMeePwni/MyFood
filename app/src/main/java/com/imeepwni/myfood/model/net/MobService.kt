@@ -2,6 +2,7 @@ package com.imeepwni.myfood.model.net
 
 import com.imeepwni.myfood.BuildConfig
 import com.imeepwni.myfood.app.RetrofitWrapper
+import com.imeepwni.myfood.model.data.GetMenuById
 import com.imeepwni.myfood.model.data.GetMenuByTabsBean
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
 import io.reactivex.Observable
@@ -34,6 +35,11 @@ object MobService {
      * 返回数据条数 对应KEY
      */
     const val KEY_SIZE = "size"
+
+    /**
+     * 菜单ID 对应KEY
+     */
+    const val KEY_ID = "id"
 
     /**
      * 默认返回条数
@@ -90,6 +96,12 @@ object MobService {
          */
         @GET("v1/cook/menu/search")
         fun getMenuByTabs(@QueryMap param: Map<String, String>): Observable<GetMenuByTabsBean>
+
+        /**
+         * 根据菜谱ID获取菜谱
+         */
+        @GET("/v1/cook/menu/query")
+        fun getMenuById(@Query(KEY_KEY) key: String, @Query(KEY_ID) menuId: String): Observable<GetMenuById>
     }
 
     /**
@@ -105,6 +117,13 @@ object MobService {
     fun getMenuByTabs(map: MutableMap<String, String>): Observable<GetMenuByTabsBean> {
         map[KEY_KEY] = APP_KEY_COOK_MENU
         return cookMenu.getMenuByTabs(map)
+    }
+
+    /**
+     * 根据菜单ID获取菜单
+     */
+    fun getMenuById(menuId: String): Observable<GetMenuById> {
+        return cookMenu.getMenuById(APP_KEY_COOK_MENU, menuId)
     }
 
 }

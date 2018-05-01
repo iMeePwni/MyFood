@@ -2,6 +2,7 @@ package com.imeepwni.myfood
 
 import android.support.annotation.CheckResult
 import com.google.gson.Gson
+import com.imeepwni.myfood.model.data.GetMenuById
 import com.imeepwni.myfood.model.data.GetMenuByTabsBean
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
 import com.imeepwni.myfood.model.net.MobService
@@ -62,6 +63,29 @@ class ModelUnitTest {
                     assert(it != null)
                 }
     }
+
+    /**
+     * 检测根据ID获取菜谱Bean类转化
+     */
+    @Test
+    fun testGetMenuByID() {
+        val path = "/Users/guofeng/AndroidStudioProjects/MyFood/app/src/test/java/com/imeepwni/myfood/data/file/getMenuById"
+        commonBeanTestFromPath<GetMenuById>(path)
+    }
+
+    /**
+     * 根据菜单ID从网络获取菜谱
+     */
+    @Test
+    fun getMenuByIdFromNet() {
+        val menuId = "00100010070000000001"
+        MobService.getMenuById(menuId)
+                .subscribe{
+                    print(it)
+                    assert(it != null)
+                }
+    }
+
 
     /**
      * 公共方法

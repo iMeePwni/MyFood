@@ -5,7 +5,7 @@ import com.imeepwni.myfood.model.net.MobService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-object TabsLab {
+object DataLab {
 
     /**
      * 全部菜单标签

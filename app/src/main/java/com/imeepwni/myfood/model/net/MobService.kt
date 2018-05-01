@@ -2,16 +2,48 @@ package com.imeepwni.myfood.model.net
 
 import com.imeepwni.myfood.BuildConfig
 import com.imeepwni.myfood.app.RetrofitWrapper
+import com.imeepwni.myfood.model.data.GetMenuByTabsBean
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 
 /**
  * 请求Mob API工具类
  */
 object MobService {
+
+    /**
+     * 菜单标签ID 对应KEY
+     */
+    const val KEY_CID = "cid"
+
+    /**
+     * 菜谱名称 对应KEY
+     */
+    const val KEY_NAME = "name"
+
+    /**
+     * 起始页 对应KEY
+     */
+    const val KEY_PAGE = "page"
+
+    /**
+     * 返回数据条数 对应KEY
+     */
+    const val KEY_SIZE = "size"
+
+    /**
+     * 默认返回条数
+     */
+    const val DEFAULT_PAGE_SIZE = 20
+
+    /**
+     * AppKey 对应Key
+     */
+    private const val KEY_KEY = "key"
 
     /**
      * Mob API Base URL
@@ -38,15 +70,41 @@ object MobService {
      * @see <a href="http://api.mob.com/#/apiwiki/cookmenu">菜谱大全</a>
      */
     private interface CookMenu {
+        /**
+         * 获取菜单标签页
+         *
+         * @param key App_KEY
+         */
         @GET("v1/cook/category/query")
-        fun getMenuTabs(@Query("key") key: String): Observable<GetMenuTabsBean>
+        fun getMenuTabs(@Query(KEY_KEY) key: String): Observable<GetMenuTabsBean>
+
+        /**
+         * 根据标签获取菜单
+         *
+         * @param param 请求参数
+         *
+         * @see KEY_CID
+         * @see KEY_NAME
+         * @see KEY_PAGE
+         * @see KEY_SIZE
+         */
+        @GET("v1/cook/menu/search")
+        fun getMenuByTabs(@QueryMap param: Map<String, String>): Observable<GetMenuByTabsBean>
     }
 
     /**
-     * 获取标签页
+     * 获取菜单标签页
      */
     fun getMenuTabs(): Observable<GetMenuTabsBean> {
         return cookMenu.getMenuTabs(APP_KEY_COOK_MENU)
+    }
+
+    /**
+     * 根据标签获取菜单
+     */
+    fun getMenuByTabs(map: MutableMap<String, String>): Observable<GetMenuByTabsBean> {
+        map[KEY_KEY] = APP_KEY_COOK_MENU
+        return cookMenu.getMenuByTabs(map)
     }
 
 }

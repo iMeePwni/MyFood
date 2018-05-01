@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.Gravity
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.imeepwni.myfood.R
-import com.imeepwni.myfood.model.repositry.TabsLab
+import com.imeepwni.myfood.model.repositry.DataLab
 import com.imeepwni.myfood.view.adapter.CategoryAdapter
 import com.orhanobut.logger.Logger
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
@@ -81,7 +81,7 @@ class TabsFragment : DialogFragment() {
      * 初始化数据
      */
     private fun initData() {
-        TabsLab.getMenuTabs {
+        DataLab.getMenuTabs {
             sectionedRecyclerViewAdapter.removeAllSections()
             // 返回结果
             it?.let {

@@ -1,7 +1,7 @@
 package com.imeepwni.myfood.model.data
 
 /**
- * 食谱
+ * 食谱(制作步骤)
  *
  * @param img 预览图
  * @param ingredients 配料

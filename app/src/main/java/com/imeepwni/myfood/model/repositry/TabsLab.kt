@@ -7,8 +7,14 @@ import io.reactivex.schedulers.Schedulers
 
 object TabsLab {
 
+    /**
+     * 全部菜单标签
+     */
     private var sMenuTabs: GetMenuTabsBean? = null
 
+    /**
+     * 获取菜单标签
+     */
     fun getMenuTabs(handleTabs: (GetMenuTabsBean?) -> Unit) {
         if (sMenuTabs == null) {
             getMenuTabsFromNet(handleTabs)
@@ -16,6 +22,9 @@ object TabsLab {
         handleTabs(sMenuTabs)
     }
 
+    /**
+     * 从网络获取菜单标签并在成功后将数据存储到本地
+     */
     private inline fun getMenuTabsFromNet(crossinline handleTabs: (GetMenuTabsBean?) -> Unit) {
         MobService.getMenuTabs()
                 .subscribeOn(Schedulers.io())

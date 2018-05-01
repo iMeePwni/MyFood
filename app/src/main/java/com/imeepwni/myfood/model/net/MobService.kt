@@ -12,6 +12,7 @@ import retrofit2.http.Query
  * 请求Mob API工具类
  */
 object MobService {
+
     /**
      * Mob API Base URL
      */
@@ -28,6 +29,11 @@ object MobService {
     private val CLIENT = RetrofitWrapper.getBaseUrlRetrofit(BASE_URL)
 
     /**
+     * 菜谱请求实例
+     */
+    private val cookMenu = CLIENT.create(CookMenu::class.java)
+
+    /**
      * Mob菜谱大全
      * @see <a href="http://api.mob.com/#/apiwiki/cookmenu">菜谱大全</a>
      */
@@ -40,7 +46,7 @@ object MobService {
      * 获取标签页
      */
     fun getMenuTabs(): Observable<GetMenuTabsBean> {
-        return CLIENT.create(CookMenu::class.java).getMenuTabs(APP_KEY_COOK_MENU)
+        return cookMenu.getMenuTabs(APP_KEY_COOK_MENU)
     }
 
 }

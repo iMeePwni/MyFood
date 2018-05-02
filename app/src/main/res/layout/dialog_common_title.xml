@@ -8,9 +8,7 @@
         android:id="@+id/tv_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/colorPrimary"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/colorTextPrimaryInvert"
         tools:text="Title" />
 </FrameLayout>

@@ -11,7 +11,7 @@ import android.view.Gravity
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.model.repositry.DataLab
-import com.imeepwni.myfood.view.adapter.CategoryAdapter
+import com.imeepwni.myfood.view.adapter.CategorySection
 import com.orhanobut.logger.Logger
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.dialog_common_title.*
@@ -92,7 +92,7 @@ class TabsFragment : DialogFragment() {
                     // 按工艺
                     it.childs?.forEach {
                         // 具体标签
-                        sectionedRecyclerViewAdapter.addSection(CategoryAdapter.newInstance(it))
+                        sectionedRecyclerViewAdapter.addSection(CategorySection.newInstance(it))
                     }
                 }
             }

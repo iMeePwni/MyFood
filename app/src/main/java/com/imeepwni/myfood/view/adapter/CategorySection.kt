@@ -12,7 +12,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 /**
  * 菜单标签Adapter
  */
-class CategoryAdapter private constructor(parameters: SectionParameters, categoryInfoAndChilds: CategoryInfoAndChilds) : Section(parameters) {
+class CategorySection private constructor(parameters: SectionParameters, categoryInfoAndChilds: CategoryInfoAndChilds) : Section(parameters) {
 
     /**
      * 菜单标签
@@ -80,12 +80,12 @@ class CategoryAdapter private constructor(parameters: SectionParameters, categor
         /**
          * 获取CategoryAdapter
          */
-        fun newInstance(categoryInfoAndChilds: CategoryInfoAndChilds): CategoryAdapter {
+        fun newInstance(categoryInfoAndChilds: CategoryInfoAndChilds): CategorySection {
             val sectionParameters = SectionParameters.builder().apply {
                 headerResourceId(android.R.layout.preference_category)
                 itemResourceId(R.layout.item_menu_tab)
             }.build()
-            return CategoryAdapter(sectionParameters, categoryInfoAndChilds)
+            return CategorySection(sectionParameters, categoryInfoAndChilds)
         }
     }
 }

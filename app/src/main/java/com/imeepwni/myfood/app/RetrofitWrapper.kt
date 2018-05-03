@@ -29,4 +29,5 @@ object RetrofitWrapper {
                 .client(clientBuilder.build())
                 .build()
     }
+
 }

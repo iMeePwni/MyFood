@@ -3,7 +3,7 @@ package com.imeepwni.myfood.model.net
 import com.imeepwni.myfood.BuildConfig
 import com.imeepwni.myfood.app.RetrofitWrapper
 import com.imeepwni.myfood.model.data.GetMenuById
-import com.imeepwni.myfood.model.data.GetMenuByTabsBean
+import com.imeepwni.myfood.model.data.GetMenuByTabBean
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
 import io.reactivex.Observable
 import retrofit2.http.GET
@@ -95,7 +95,7 @@ object MobService {
          * @see KEY_SIZE
          */
         @GET("v1/cook/menu/search")
-        fun getMenuByTabs(@QueryMap param: Map<String, String>): Observable<GetMenuByTabsBean>
+        fun getMenuByTabs(@QueryMap param: Map<String, String>): Observable<GetMenuByTabBean>
 
         /**
          * 根据菜谱ID获取菜谱
@@ -114,7 +114,7 @@ object MobService {
     /**
      * 根据标签获取菜单
      */
-    fun getMenuByTabs(map: MutableMap<String, String>): Observable<GetMenuByTabsBean> {
+    fun getMenuByTab(map: MutableMap<String, String>): Observable<GetMenuByTabBean> {
         map[KEY_KEY] = APP_KEY_COOK_MENU
         return cookMenu.getMenuByTabs(map)
     }

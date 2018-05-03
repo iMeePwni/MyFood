@@ -3,7 +3,7 @@ package com.imeepwni.myfood
 import android.support.annotation.CheckResult
 import com.google.gson.Gson
 import com.imeepwni.myfood.model.data.GetMenuById
-import com.imeepwni.myfood.model.data.GetMenuByTabsBean
+import com.imeepwni.myfood.model.data.GetMenuByTabBean
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
 import com.imeepwni.myfood.model.net.MobService
 import org.junit.Test
@@ -42,8 +42,8 @@ class ModelUnitTest {
      */
     @Test
     fun testGetMenuByTabs() {
-        val path = "/Users/guofeng/AndroidStudioProjects/MyFood/app/src/test/java/com/imeepwni/myfood/data/file/getMenuByTabs"
-        commonBeanTestFromPath<GetMenuByTabsBean>(path)
+        val path = "/Users/guofeng/AndroidStudioProjects/MyFood/app/src/test/java/com/imeepwni/myfood/data/file/getMenuByTab"
+        commonBeanTestFromPath<GetMenuByTabBean>(path)
     }
 
     /**
@@ -57,7 +57,7 @@ class ModelUnitTest {
         param[MobService.KEY_PAGE] = "1"
         param[MobService.KEY_SIZE] = MobService.DEFAULT_PAGE_SIZE.toString()
 
-        MobService.getMenuByTabs(param)
+        MobService.getMenuByTab(param)
                 .subscribe {
                     print(it)
                     assert(it != null)

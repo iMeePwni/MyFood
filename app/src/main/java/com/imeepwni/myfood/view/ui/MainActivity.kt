@@ -40,9 +40,13 @@ class MainActivity : BaseActivity() {
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
                     super.getItemOffsets(outRect, view, parent, state)
-                    outRect?.bottom = this@MainActivity.resources.getDimensionPixelOffset(R.dimen.common_margin) / 2
+                    outRect?.apply {
+                        val pixelOffset = this@MainActivity.resources.getDimensionPixelOffset(R.dimen.common_margin)
+                        left = pixelOffset
+                        right = pixelOffset
+                        bottom = pixelOffset / 2
+                    }
                 }
-
 
             })
             adapter = SectionedRecyclerViewAdapter()

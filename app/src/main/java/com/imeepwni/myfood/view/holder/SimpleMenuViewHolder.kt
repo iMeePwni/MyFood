@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.model.data.Menu
+import com.imeepwni.myfood.view.ui.MenuDetailActivity
 
 /**
  * 菜谱简介ViewHolder
@@ -23,6 +24,10 @@ class SimpleMenuViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         menu.let {
             tv_title.text = it.name
             tv_ctgs.text = it.ctgTitles
+            itemView.setOnClickListener { _ ->
+                // TODO 增加过渡动画
+                MenuDetailActivity.startActivity(itemView.context, it.menuId)
+            }
         }
     }
 }

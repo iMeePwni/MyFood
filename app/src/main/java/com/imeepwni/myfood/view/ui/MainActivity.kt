@@ -8,10 +8,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.app.BaseActivity
+import com.imeepwni.myfood.model.net.MobService
 import com.imeepwni.myfood.model.repositry.DataLab
 import com.imeepwni.myfood.view.adapter.SimpleMenuSection
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.toast
 
 /**
  * 主界面
@@ -60,6 +62,10 @@ class MainActivity : BaseActivity() {
         val map = HashMap<String, String>()
         DataLab.getMenuByTab(map) {
             it?.let {
+                if (it.retCode != MobService.RESULT_OK) {
+                    toast(it.msg)
+                    return@let
+                }
                 val mAdapter = rv_content.adapter
                 mAdapter as SectionedRecyclerViewAdapter
                 mAdapter.removeAllSections()

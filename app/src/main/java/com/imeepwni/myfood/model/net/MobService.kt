@@ -47,6 +47,11 @@ object MobService {
     const val DEFAULT_PAGE_SIZE = 20
 
     /**
+     * 返回结果成功
+     */
+    const val RESULT_OK = "200"
+
+    /**
      * AppKey 对应Key
      */
     private const val KEY_KEY = "key"

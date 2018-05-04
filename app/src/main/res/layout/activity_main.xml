@@ -8,13 +8,23 @@
 
     <!-- // TODO remove -->
     <Button
-        android:id="@+id/tv_show_tabs"
+        android:id="@+id/btn_show_tabs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_margin"
         android:text="Show Tabs"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_chaos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CHAOS"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_show_tabs"
+        app:layout_constraintEnd_toStartOf="@+id/btn_load_more"
+        app:layout_constraintStart_toEndOf="@+id/btn_show_tabs"
+        app:layout_constraintTop_toTopOf="@+id/btn_show_tabs" />
 
     <!-- // TODO remove load more -->
     <Button
@@ -23,9 +33,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/common_margin"
         android:text="LOAD MORE"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_show_tabs"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_show_tabs"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_show_tabs" />
+        app:layout_constraintTop_toTopOf="@+id/btn_show_tabs" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_content"
@@ -33,6 +43,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_show_tabs" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_show_tabs" />
+
 
 </android.support.constraint.ConstraintLayout>

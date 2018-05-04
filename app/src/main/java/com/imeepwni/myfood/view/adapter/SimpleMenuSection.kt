@@ -11,33 +11,29 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 /**
  * 菜单简介Adapter
  */
-class SimpleMenuSection private constructor(parameters: SectionParameters, menus: List<Menu>?) : Section(parameters) {
+class SimpleMenuSection private constructor(parameters: SectionParameters, var menus: List<Menu>) : Section(parameters) {
 
-    private val mMenus = ArrayList<Menu>()
-
-    init {
-        menus?.let {
-            mMenus.addAll(menus)
-        }
+    /**
+     * 设置数据源
+     */
+    fun setData(data: List<Menu>) {
+        menus = data
     }
 
     /**
-     * 添加额外数据
-     *
-     * @param moreData 加载更多的数据
+     * 获取数据源
      */
-    @Deprecated("Only for test")
-    fun addMoreData(moreData: List<Menu>) {
-        mMenus.addAll(moreData)
+    fun getData(): List<Menu> {
+        return menus
     }
 
     override fun getContentItemsTotal(): Int {
-        return mMenus.size
+        return menus.size
     }
 
     override fun onBindItemViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder as SimpleMenuViewHolder
-        holder.bind(mMenus[position])
+        holder.bind(menus[position])
     }
 
     override fun getItemViewHolder(view: View): RecyclerView.ViewHolder {
@@ -49,7 +45,7 @@ class SimpleMenuSection private constructor(parameters: SectionParameters, menus
         /**
          * 获取SimpleMenuAdapter实例
          */
-        fun newInstance(menus: List<Menu>?): SimpleMenuSection {
+        fun newInstance(menus: List<Menu>): SimpleMenuSection {
             val sectionParameters = SectionParameters.builder()
                     .itemResourceId(R.layout.item_simpel_menu)
                     .build()

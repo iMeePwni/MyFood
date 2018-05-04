@@ -2,6 +2,7 @@ package com.imeepwni.myfood.view.ui
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -9,6 +10,7 @@ import android.text.TextUtils
 import android.view.View
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.app.BaseActivity
+import com.imeepwni.myfood.model.data.Menu
 import com.imeepwni.myfood.model.net.MobService
 import com.imeepwni.myfood.model.repositry.DataLab
 import com.imeepwni.myfood.view.adapter.SimpleMenuSection
@@ -16,21 +18,12 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * 主界面
  */
 class MainActivity : BaseActivity() {
-
-    /**
-     * Section tag content
-     */
-    private val SECTION_TAG_MENU_CONTENT = "menu_content"
-
-    /**
-     * 当前根据标签获取菜单的请求参数
-     */
-    private var mGetMenuByTabMap: MutableMap<String, String> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +34,36 @@ class MainActivity : BaseActivity() {
     }
 
     /**
+     * Section Adapter
+     */
+    private val mSectionAdapter = SectionedRecyclerViewAdapter()
+
+    /**
+     * Section
+     */
+    private val mMenuAdapter = SimpleMenuSection.newInstance(Collections.emptyList())
+
+    /**
+     * 当前根据标签获取菜单的请求参数
+     */
+    private var mGetMenuByTabMap: MutableMap<String, String> = HashMap()
+
+    /**
      * 初始化控件
      */
     private fun initView() {
-        tv_show_tabs.setOnClickListener {
+        btn_show_tabs.setOnClickListener {
             showTabsFragment()
+        }
+        btn_chaos.setOnClickListener {
+            val oldList = mMenuAdapter.getData()
+            val newList = MutableList<Menu>(oldList.size) {
+                oldList[it]
+            }
+            newList.sortWith(Comparator { o1: Menu, o2: Menu ->
+                (o1.menuId.toLong() - o2.menuId.toLong()).toInt()
+            })
+            DiffUtil.calculateDiff(Menu.getDiffUtilCallback(oldList, newList)).dispatchUpdatesTo(mSectionAdapter)
         }
         btn_load_more.setOnClickListener {
             mGetMenuByTabMap.let {
@@ -58,7 +76,7 @@ class MainActivity : BaseActivity() {
             }
             getMenuByTabs(true)
         }
-
+        mSectionAdapter.addSection(TAG_MENU_CONTENT, mMenuAdapter)
         rv_content.run {
             layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
             itemAnimator = DefaultItemAnimator()
@@ -74,7 +92,7 @@ class MainActivity : BaseActivity() {
                 }
 
             })
-            adapter = SectionedRecyclerViewAdapter()
+            adapter = mSectionAdapter
         }
     }
 
@@ -94,28 +112,22 @@ class MainActivity : BaseActivity() {
             if (it == null) {
                 return@getMenuByTab
             }
-            if (it.retCode != MobService.RESULT_OK) {
+            if (it.retCode != MobService.RESULT_OK || it.result == null) {
                 toast(it.msg)
                 return@getMenuByTab
             }
-            val mAdapter = rv_content.adapter
-            mAdapter as SectionedRecyclerViewAdapter
-            mAdapter.run {
-                if (isLoadMore) {
-                    var section = getSection(SECTION_TAG_MENU_CONTENT)
-                    if (section == null) {
-                        section = SimpleMenuSection.newInstance(null)
-                    }
-                    section as SimpleMenuSection
-                    if (it.result?.list != null) {
-                        section.addMoreData(it.result.list)
-                    }
-                } else {
-                    removeAllSections()
-                    addSection(SECTION_TAG_MENU_CONTENT, SimpleMenuSection.newInstance(it.result?.list))
+
+            val oldList = mMenuAdapter.getData()
+            val moreList = it.result.list
+            val newList: List<Menu> = when {
+                isLoadMore -> ArrayList<Menu>().apply {
+                    addAll(oldList)
+                    addAll(moreList)
                 }
-                notifyDataSetChanged()
+                else -> moreList
             }
+            mMenuAdapter.setData(newList)
+            DiffUtil.calculateDiff(Menu.getDiffUtilCallback(oldList, newList)).dispatchUpdatesTo(mSectionAdapter)
         }
     }
 
@@ -131,6 +143,14 @@ class MainActivity : BaseActivity() {
         beginTransaction.addToBackStack(null)
         val tabsFragment = TabsFragment.newInstance()
         tabsFragment.show(beginTransaction, TabsFragment.TAG)
+    }
+
+    companion object {
+
+        /**
+         * Section tag fo menu content
+         */
+        private const val TAG_MENU_CONTENT = "menu_content"
     }
 
 }

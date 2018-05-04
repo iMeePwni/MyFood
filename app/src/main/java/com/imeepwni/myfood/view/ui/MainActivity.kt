@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.View
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.app.BaseActivity
@@ -14,11 +15,22 @@ import com.imeepwni.myfood.view.adapter.SimpleMenuSection
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
+import java.util.*
 
 /**
  * 主界面
  */
 class MainActivity : BaseActivity() {
+
+    /**
+     * Section tag content
+     */
+    private val SECTION_TAG_MENU_CONTENT = "menu_content"
+
+    /**
+     * 当前根据标签获取菜单的请求参数
+     */
+    private var mGetMenuByTabMap: MutableMap<String, String> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +46,17 @@ class MainActivity : BaseActivity() {
     private fun initView() {
         tv_show_tabs.setOnClickListener {
             showTabsFragment()
+        }
+        btn_load_more.setOnClickListener {
+            mGetMenuByTabMap.let {
+                val currentPage = it[MobService.KEY_PAGE]
+                val isNotSetPage = TextUtils.isEmpty(currentPage)
+                it[MobService.KEY_PAGE] = when {
+                    isNotSetPage -> 1.toString()
+                    else -> currentPage!!.toInt().plus(1).toString()
+                }
+            }
+            getMenuByTabs(true)
         }
 
         rv_content.run {
@@ -59,18 +82,39 @@ class MainActivity : BaseActivity() {
      * 初始化数据
      */
     private fun initData() {
-        val map = HashMap<String, String>()
-        DataLab.getMenuByTab(map) {
-            it?.let {
-                if (it.retCode != MobService.RESULT_OK) {
-                    toast(it.msg)
-                    return@let
+        mGetMenuByTabMap.clear()
+        getMenuByTabs(false)
+    }
+
+    /**
+     * 根据标签获取菜单
+     */
+    private fun getMenuByTabs(isLoadMore: Boolean) {
+        DataLab.getMenuByTab(mGetMenuByTabMap) {
+            if (it == null) {
+                return@getMenuByTab
+            }
+            if (it.retCode != MobService.RESULT_OK) {
+                toast(it.msg)
+                return@getMenuByTab
+            }
+            val mAdapter = rv_content.adapter
+            mAdapter as SectionedRecyclerViewAdapter
+            mAdapter.run {
+                if (isLoadMore) {
+                    var section = getSection(SECTION_TAG_MENU_CONTENT)
+                    if (section == null) {
+                        section = SimpleMenuSection.newInstance(null)
+                    }
+                    section as SimpleMenuSection
+                    if (it.result?.list != null) {
+                        section.addMoreData(it.result.list)
+                    }
+                } else {
+                    removeAllSections()
+                    addSection(SECTION_TAG_MENU_CONTENT, SimpleMenuSection.newInstance(it.result?.list))
                 }
-                val mAdapter = rv_content.adapter
-                mAdapter as SectionedRecyclerViewAdapter
-                mAdapter.removeAllSections()
-                mAdapter.addSection(SimpleMenuSection.newInstance(it.result?.list))
-                mAdapter.notifyDataSetChanged()
+                notifyDataSetChanged()
             }
         }
     }

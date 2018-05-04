@@ -21,6 +21,16 @@ class SimpleMenuSection private constructor(parameters: SectionParameters, menus
         }
     }
 
+    /**
+     * 添加额外数据
+     *
+     * @param moreData 加载更多的数据
+     */
+    @Deprecated("Only for test")
+    fun addMoreData(moreData: List<Menu>) {
+        mMenus.addAll(moreData)
+    }
+
     override fun getContentItemsTotal(): Int {
         return mMenus.size
     }

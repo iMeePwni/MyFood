@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_show_tab"
+        android:title="SHOW TAB" />
+    <item
+        android:id="@+id/menu_chaos"
+        android:title="CHAOS" />
+    <item
+        android:id="@+id/menu_load_more"
+        android:title="LOAD MORE" />
+</menu>

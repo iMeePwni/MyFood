@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyFood</string>
+    <string name="app_name">口袋菜谱</string>
 
     <string name="reset">重置</string>
     <string name="cancel">取消</string>

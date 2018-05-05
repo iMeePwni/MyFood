@@ -7,6 +7,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
+import android.view.MenuItem
 import android.view.View
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.app.BaseActivity
@@ -52,32 +53,12 @@ class MainActivity : BaseActivity() {
      * 初始化控件
      */
     private fun initView() {
-        btn_show_tabs.setOnClickListener {
-            showTabsFragment()
-        }
-        btn_chaos.setOnClickListener {
-            val oldList = mMenuAdapter.getData()
-            val newList = MutableList<Menu>(oldList.size) {
-                oldList[it]
-            }
-            newList.sortWith(Comparator { o1: Menu, o2: Menu ->
-                (o1.menuId.toLong() - o2.menuId.toLong()).toInt()
-            })
-            DiffUtil.calculateDiff(Menu.getDiffUtilCallback(oldList, newList)).dispatchUpdatesTo(mSectionAdapter)
-        }
-        btn_load_more.setOnClickListener {
-            mGetMenuByTabMap.let {
-                val currentPage = it[MobService.KEY_PAGE]
-                val isNotSetPage = TextUtils.isEmpty(currentPage)
-                it[MobService.KEY_PAGE] = when {
-                    isNotSetPage -> 1.toString()
-                    else -> currentPage!!.toInt().plus(1).toString()
-                }
-            }
-            getMenuByTabs(true)
-        }
+        mTvCurrentCategory.text = getString(R.string.app_name)
+        // 菜单按钮
+        setSupportActionBar(mToolBar)
+
         mSectionAdapter.addSection(TAG_MENU_CONTENT, mMenuAdapter)
-        rv_content.run {
+        mRVContent.run {
             layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
             itemAnimator = DefaultItemAnimator()
             addItemDecoration(object : RecyclerView.ItemDecoration() {
@@ -133,6 +114,27 @@ class MainActivity : BaseActivity() {
     }
 
     /**
+     * 设置标题栏更多按钮
+     */
+    override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    /**
+     * 更多按钮点击事件
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_show_tab -> showTabsFragment()
+            R.id.menu_chaos -> chaosData()
+            R.id.menu_load_more -> loadMoreData()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
+    /**
      * 菜单标签选择器
      */
     private fun showTabsFragment() {
@@ -144,6 +146,35 @@ class MainActivity : BaseActivity() {
         beginTransaction.addToBackStack(null)
         val tabsFragment = TabsFragment.newInstance()
         tabsFragment.show(beginTransaction, TabsFragment.TAG)
+    }
+
+    /**
+     * 打乱数据
+     */
+    private fun chaosData() {
+        val oldList = mMenuAdapter.getData()
+        val newList = MutableList(oldList.size) {
+            oldList[it]
+        }
+        newList.sortWith(Comparator { o1: Menu, o2: Menu ->
+            (o1.menuId.toLong() - o2.menuId.toLong()).toInt()
+        })
+        DiffUtil.calculateDiff(Menu.getDiffUtilCallback(oldList, newList)).dispatchUpdatesTo(mSectionAdapter)
+    }
+
+    /**
+     * 加载更多
+     */
+    private fun loadMoreData() {
+        mGetMenuByTabMap.let {
+            val currentPage = it[MobService.KEY_PAGE]
+            val isNotSetPage = TextUtils.isEmpty(currentPage)
+            it[MobService.KEY_PAGE] = when {
+                isNotSetPage -> 1.toString()
+                else -> currentPage!!.toInt().plus(1).toString()
+            }
+        }
+        getMenuByTabs(true)
     }
 
     companion object {

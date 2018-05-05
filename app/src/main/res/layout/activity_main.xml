@@ -1,50 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.ui.MainActivity">
 
-    <!-- // TODO remove -->
-    <Button
-        android:id="@+id/btn_show_tabs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_margin"
-        android:text="Show Tabs"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/mTopLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btn_chaos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CHAOS"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_show_tabs"
-        app:layout_constraintEnd_toStartOf="@+id/btn_load_more"
-        app:layout_constraintStart_toEndOf="@+id/btn_show_tabs"
-        app:layout_constraintTop_toTopOf="@+id/btn_show_tabs" />
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/mCTLToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways">
 
-    <!-- // TODO remove load more -->
-    <Button
-        android:id="@+id/btn_load_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/common_margin"
-        android:text="LOAD MORE"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_show_tabs"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btn_show_tabs" />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/mToolBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?android:attr/actionBarSize"
+                app:layout_collapseMode="pin">
+
+                <TextView
+                    android:id="@+id/mTvCurrentCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="@string/app_name" />
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_content"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_show_tabs" />
-
-
-</android.support.constraint.ConstraintLayout>
+        android:id="@+id/mRVContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</android.support.design.widget.CoordinatorLayout>

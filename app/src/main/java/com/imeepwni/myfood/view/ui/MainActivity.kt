@@ -76,6 +76,7 @@ class MainActivity : BaseActivity() {
             })
             adapter = mSectionAdapter
         }
+
     }
 
     /**

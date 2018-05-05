@@ -84,8 +84,9 @@ class MainActivity : BaseActivity() {
                 override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
                     super.getItemOffsets(outRect, view, parent, state)
                     outRect?.apply {
-                        val pixelOffset = this@MainActivity.resources.getDimensionPixelOffset(R.dimen.common_margin)
+                        val pixelOffset = this@MainActivity.resources.getDimensionPixelOffset(R.dimen.recycler_view_item_margin)
                         left = pixelOffset
+                        top = pixelOffset / 2
                         right = pixelOffset
                         bottom = pixelOffset / 2
                     }

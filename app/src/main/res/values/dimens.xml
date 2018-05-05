@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="common_margin">16dp</dimen>
+    <dimen name="recycler_view_item_margin">8dp</dimen>
 
     <!-- dialog -->
     <dimen name="dialog_margin_horizontal">@dimen/common_margin</dimen>

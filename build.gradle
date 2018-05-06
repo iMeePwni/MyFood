@@ -3,8 +3,8 @@
 buildscript {
     // 版本管理
     ext {
-        kotlin_version = '1.2.40'
-        support_version = '27.1.0'
+        kotlin_version = '1.2.41'
+        support_version = '27.1.1'
         anko_version='0.10.5'
     }
     repositories {

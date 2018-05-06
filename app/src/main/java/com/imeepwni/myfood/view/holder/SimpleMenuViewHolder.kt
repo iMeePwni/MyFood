@@ -17,17 +17,17 @@ class SimpleMenuViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     /**
      * 菜单缩略图
      */
-    private val mThumbNail: ImageView = view.findViewById(R.id.iv_thumbnail)
+    private val mImage: ImageView = view.findViewById(R.id.mIVImage)
 
     /**
      * 菜单名
      */
-    private val mTitle: TextView = view.findViewById(R.id.tv_name)
+    private val mName: TextView = view.findViewById(R.id.mTVMenuName)
 
     /**
      * 菜单所属标签
      */
-    private val mCtgs: TextView = view.findViewById(R.id.tv_ctgs)
+    private val mCtgs: TextView = view.findViewById(R.id.mTVMenuCtgs)
 
     /**
      * 绑定菜单数据
@@ -36,13 +36,14 @@ class SimpleMenuViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         menu.let {
             val context = itemView.context
             Picasso.with(context)
+//                    .load(it.recipe.img)
                     .load(it.recipe.img)
                     // TODO 错误图片
-                    .error(R.mipmap.ic_launcher)
+                    .error(android.R.drawable.stat_notify_error)
                     // TODO 占位图
-                    .placeholder(R.mipmap.ic_launcher)
-                    .into(mThumbNail)
-            mTitle.text = it.name
+                    .placeholder(android.R.drawable.ic_menu_myplaces)
+                    .into(mImage)
+            mName.text = it.name
             mCtgs.text = it.ctgTitles
             itemView.setOnClickListener { _ ->
                 // TODO 增加过渡动画

@@ -50,7 +50,7 @@ class CategorySection private constructor(parameters: SectionParameters, categor
 
         fun bind(categoryInfoAndChilds: CategoryInfoAndChilds) {
             // 菜单标签名称
-            view.findViewById<TextView>(R.id.tv_name).apply {
+            view.findViewById<TextView>(R.id.mTVMenuName).apply {
                 text = categoryInfoAndChilds.categoryInfo.name
             }
         }

@@ -61,32 +61,28 @@ class MainActivity : BaseActivity() {
         mRVContent.run {
             layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
             itemAnimator = DefaultItemAnimator()
+            adapter = mSectionAdapter
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
                     super.getItemOffsets(outRect, view, parent, state)
                     outRect?.apply {
                         val pixelOffset = this@MainActivity.resources.getDimensionPixelOffset(R.dimen.recycler_view_item_margin)
                         left = pixelOffset
-                        when (getChildAdapterPosition(view)) {
-                            0 -> {
-                                top = pixelOffset
-                                bottom = pixelOffset / 2
-                            }
-                            childCount - 1 -> {
-                                top = pixelOffset / 2
-                                bottom = pixelOffset
-                            }
-                            else -> {
-                                top = pixelOffset / 2
-                                bottom = pixelOffset / 2
-                            }
-                        }
                         right = pixelOffset
+                        val currentViewPosition = layoutManager.getPosition(view)
+                        val theLastViewPosition = adapter.itemCount - 1
+                        val isLastView = currentViewPosition == theLastViewPosition
+                        if (isLastView) {
+                            top = pixelOffset
+                            bottom = pixelOffset
+                        } else {
+                            top = pixelOffset
+                            bottom = 0
+                        }
                     }
                 }
 
             })
-            adapter = mSectionAdapter
         }
 
     }

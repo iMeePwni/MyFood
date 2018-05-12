@@ -1,6 +1,8 @@
 package com.imeepwni.myfood.view.ui.test
 
+import android.arch.paging.PagedList
 import android.arch.paging.PagedListAdapter
+import android.arch.paging.PositionalDataSource
 import android.os.Bundle
 import android.support.annotation.NonNull
 import android.support.v7.util.DiffUtil
@@ -22,18 +24,49 @@ import kotlinx.android.synthetic.main.fragment_page.*
  */
 class PagingFragment : BaseFragment() {
 
+    private lateinit var mPageListConfig: PagedList.Config
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        initData()
         return inflater.inflate(R.layout.fragment_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         mRVContent.run {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
             itemAnimator = DefaultItemAnimator()
-            adapter = PagingTestAdapter.newInstance()
+            adapter = PagingTestAdapter.newInstance().apply {
+                //                submitList(LivePagedListBuilder<DataSource.Factory<Int, Bean>., mPageListConfig>)
+            }
         }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private fun initData() {
+        val beans = arrayListOf<Bean>()
+        (0..500).forEach {
+            val bean = Bean(it, it.toChar().toString())
+            beans.add(bean)
+        }
+        val value: PositionalDataSource<Bean> = object : PositionalDataSource<Bean>() {
+            override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Bean>) {
+                callback.onResult(beans.subList(0, Math.min(params.startPosition + params.loadSize, beans.size)))
+            }
+
+            override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Bean>) {
+                callback.onResult(beans.subList(params.requestedStartPosition, params.requestedLoadSize), params.requestedStartPosition)
+            }
+        }
+        mPageListConfig = PagedList.Config.Builder()
+                .setPageSize(PagingTestAdapter.PER_PAGE_SIZE)
+                .setInitialLoadSizeHint(PagingTestAdapter.FIRST_LOAD_SIZE)
+                .setEnablePlaceholders(false)
+                .build()!!
     }
 
     /**
@@ -53,6 +86,17 @@ class PagingFragment : BaseFragment() {
         }
 
         companion object {
+
+            /**
+             * 每页数据
+             */
+            const val PER_PAGE_SIZE = 20
+
+            /**
+             * 第一次加载的数据
+             */
+            const val FIRST_LOAD_SIZE = 40
+
             fun newInstance(): PagedListAdapter<Bean, ViewHolder> {
                 return PagingTestAdapter(object : DiffUtil.ItemCallback<Bean>() {
                     override fun areItemsTheSame(oldItem: Bean?, newItem: Bean?): Boolean {

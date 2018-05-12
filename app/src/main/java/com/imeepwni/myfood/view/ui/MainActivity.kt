@@ -15,6 +15,7 @@ import com.imeepwni.myfood.model.data.Menu
 import com.imeepwni.myfood.model.net.MobService
 import com.imeepwni.myfood.model.repositry.DataLab
 import com.imeepwni.myfood.view.adapter.SimpleMenuSection
+import com.imeepwni.myfood.view.ui.test.TestActivity
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
@@ -138,6 +139,7 @@ class MainActivity : BaseActivity() {
             R.id.menu_show_tab -> showTabsFragment()
             R.id.menu_chaos -> chaosData()
             R.id.menu_load_more -> loadMoreData()
+            R.id.menu_test -> goToTestActivity()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -184,6 +186,13 @@ class MainActivity : BaseActivity() {
             }
         }
         getMenuByTabs(true)
+    }
+
+    /**
+     * 跳转到测试页面
+     */
+    private fun goToTestActivity() {
+        TestActivity.startActivity(this)
     }
 
     companion object {

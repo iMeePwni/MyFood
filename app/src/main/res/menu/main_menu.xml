@@ -9,4 +9,7 @@
     <item
         android:id="@+id/menu_load_more"
         android:title="LOAD MORE" />
+    <item
+        android:id="@+id/menu_test"
+        android:title="TEST" />
 </menu>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.app.BaseActivity
+import kotlinx.android.synthetic.main.activity_test.*
 import org.jetbrains.anko.startActivity
 
 /**
@@ -15,9 +16,9 @@ class TestActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
 
+        initToolBar()
         showPagingFragment()
     }
-
 
     /**
      * 展示PagingFragment
@@ -28,14 +29,27 @@ class TestActivity : BaseActivity() {
         if (prev != null) {
             beginTransaction.remove(prev)
         }
-        beginTransaction.addToBackStack(null)
         val pagingFragment = PagingFragment.newInstance()
         beginTransaction.add(R.id.container, pagingFragment, TAG_PAGING)
         beginTransaction.commit()
+        mTVTestTitle.text = TAG_PAGING
+    }
+
+    /**
+     * 初始化ToolBar
+     */
+    private fun initToolBar() {
+        setSupportActionBar(mToolBar)
+        mToolBar.setNavigationOnClickListener {
+            finish()
+        }
     }
 
     companion object {
 
+        /**
+         * Test Paging Tag
+         */
         private const val TAG_PAGING = "paging"
 
         /**

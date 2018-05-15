@@ -42,6 +42,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     // Architecture
     implementation "android.arch.paging:runtime:1.0.0-rc1"
+    implementation "android.arch.paging:rxjava2:1.0.0-alpha1"
     // Common
     implementation 'com.orhanobut:logger:2.2.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'

@@ -1,8 +1,6 @@
 package com.imeepwni.myfood.view.ui.test
 
-import android.arch.paging.PagedList
-import android.arch.paging.PagedListAdapter
-import android.arch.paging.PositionalDataSource
+import android.arch.paging.*
 import android.os.Bundle
 import android.support.annotation.NonNull
 import android.support.v7.util.DiffUtil
@@ -17,30 +15,57 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.app.BaseFragment
+import com.imeepwni.myfood.app.CommonHelper
+import io.reactivex.BackpressureStrategy
 import kotlinx.android.synthetic.main.fragment_page.*
+
 
 /**
  * 测试Paging {@link https://developer.android.google.cn/topic/libraries/architecture/paging/}
  */
 class PagingFragment : BaseFragment() {
 
+    /**
+     * 加载策略
+     */
     private lateinit var mPageListConfig: PagedList.Config
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    /**
+     * 数据源
+     */
+    private lateinit var mDataSource: PositionalDataSource<Bean>
+
+    /**
+     * 原始数据
+     */
+    private lateinit var mBeans: MutableList<Bean>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         initData()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mRVContent.run {
+        val pagingTestAdapter = PagingTestAdapter.newInstance()
+        val rxDataSource = RxPagedListBuilder(object : DataSource.Factory<Int, Bean>() {
+            override fun create(): DataSource<Int, Bean> = mDataSource
+        }, mPageListConfig).buildFlowable(BackpressureStrategy.BUFFER)
+        mCompositeDisposable.add(rxDataSource
+                .compose(CommonHelper.getFlowableTransformer<PagedList<Bean>>())
+                .subscribe {
+                    pagingTestAdapter.submitList(it)
+                })
+        mRVTestBean.run {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
             itemAnimator = DefaultItemAnimator()
-            adapter = PagingTestAdapter.newInstance().apply {
-                //                submitList(LivePagedListBuilder<DataSource.Factory<Int, Bean>., mPageListConfig>)
-            }
+            adapter = pagingTestAdapter
         }
     }
 
@@ -48,18 +73,19 @@ class PagingFragment : BaseFragment() {
      * 初始化数据
      */
     private fun initData() {
-        val beans = arrayListOf<Bean>()
-        (0..500).forEach {
+        mBeans = ArrayList()
+        (0..1000).forEach {
             val bean = Bean(it, it.toChar().toString())
-            beans.add(bean)
+            mBeans.add(bean)
         }
-        val value: PositionalDataSource<Bean> = object : PositionalDataSource<Bean>() {
+        mDataSource = object : PositionalDataSource<Bean>() {
             override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Bean>) {
-                callback.onResult(beans.subList(0, Math.min(params.startPosition + params.loadSize, beans.size)))
+                callback.onResult(mBeans.subList(params.startPosition, Math.min(params.startPosition + params.loadSize, mBeans.size)))
             }
 
             override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Bean>) {
-                callback.onResult(beans.subList(params.requestedStartPosition, params.requestedLoadSize), params.requestedStartPosition)
+                val size = Math.min(params.requestedLoadSize, mBeans.size)
+                callback.onResult(mBeans.subList(params.requestedStartPosition, size), params.requestedStartPosition)
             }
         }
         mPageListConfig = PagedList.Config.Builder()
@@ -70,9 +96,30 @@ class PagingFragment : BaseFragment() {
     }
 
     /**
-     * 测试Adapter
+     * 普通Adapter
+     */
+    private class CommonAdapter(val data: MutableList<Bean>) : RecyclerView.Adapter<ViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_expandable_list_item_2, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun getItemCount(): Int {
+            return data.size
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.bind(data[position])
+        }
+
+    }
+
+    /**
+     * 测试Paging Adapter
      */
     private class PagingTestAdapter(diffCallback: DiffUtil.ItemCallback<Bean>) : PagedListAdapter<Bean, ViewHolder>(diffCallback) {
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_expandable_list_item_2, parent, false)
             return ViewHolder(view)
@@ -95,24 +142,13 @@ class PagingFragment : BaseFragment() {
             /**
              * 第一次加载的数据
              */
-            const val FIRST_LOAD_SIZE = 40
+            const val FIRST_LOAD_SIZE = 50
 
-            fun newInstance(): PagedListAdapter<Bean, ViewHolder> {
-                return PagingTestAdapter(object : DiffUtil.ItemCallback<Bean>() {
-                    override fun areItemsTheSame(oldItem: Bean?, newItem: Bean?): Boolean {
-                        return when {
-                            oldItem != null && newItem != null -> oldItem.id == newItem.id
-                            else -> oldItem == null && newItem == null
-                        }
-                    }
-
-                    override fun areContentsTheSame(oldItem: Bean?, newItem: Bean?): Boolean {
-                        return when {
-                            oldItem != null && newItem != null -> oldItem == newItem
-                            else -> oldItem == null && newItem == null
-                        }
-                    }
-                })
+            /**
+             * 获取Adapter实例
+             */
+            fun newInstance(): PagingTestAdapter {
+                return PagingTestAdapter(Bean.itemCallback)
             }
         }
     }
@@ -122,8 +158,8 @@ class PagingFragment : BaseFragment() {
      */
     private class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val text1 = view.findViewById<TextView>(R.id.text1)
-        private val text2 = view.findViewById<TextView>(R.id.text2)
+        private val text1 = itemView.findViewById<TextView>(android.R.id.text1)
+        private val text2 = itemView.findViewById<TextView>(android.R.id.text2)
 
         fun bind(@NonNull bean: Bean) {
             text1.text = "id: ${bean.id}"
@@ -134,7 +170,29 @@ class PagingFragment : BaseFragment() {
     /**
      * 测试Bean
      */
-    private data class Bean(val id: Int, val name: String)
+    private data class Bean(val id: Int, val name: String) {
+
+        companion object {
+            /**
+             * 数据对比
+             */
+            val itemCallback = object : DiffUtil.ItemCallback<Bean>() {
+                override fun areItemsTheSame(oldItem: Bean?, newItem: Bean?): Boolean {
+                    return when {
+                        oldItem != null && newItem != null -> oldItem.id == newItem.id
+                        else -> oldItem == null && newItem == null
+                    }
+                }
+
+                override fun areContentsTheSame(oldItem: Bean?, newItem: Bean?): Boolean {
+                    return when {
+                        oldItem != null && newItem != null -> oldItem == newItem
+                        else -> oldItem == null && newItem == null
+                    }
+                }
+            }
+        }
+    }
 
     companion object {
 

@@ -1,7 +1,7 @@
 package com.imeepwni.myfood.model.net
 
 import com.imeepwni.myfood.BuildConfig
-import com.imeepwni.myfood.app.RetrofitWrapper
+import com.imeepwni.myfood.app.CommonHelper
 import com.imeepwni.myfood.model.data.GetMenuById
 import com.imeepwni.myfood.model.data.GetMenuByTabBean
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
@@ -69,7 +69,7 @@ object MobService {
     /**
      * Mob Client
      */
-    private val CLIENT = RetrofitWrapper.getBaseUrlRetrofit(BASE_URL)
+    private val CLIENT = CommonHelper.getBaseUrlRetrofit(BASE_URL)
 
     /**
      * 菜谱请求实例

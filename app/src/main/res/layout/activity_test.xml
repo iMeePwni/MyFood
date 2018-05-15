@@ -22,9 +22,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?android:attr/actionBarSize"
-                app:layout_collapseMode="pin">
+                app:layout_collapseMode="pin"
+                app:navigationIcon="?android:attr/homeAsUpIndicator"
+                app:title="@string/app_name">
 
                 <TextView
+                    android:id="@+id/mTVTestTitle"
                     style="?android:attr/textAppearanceSearchResultTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -33,16 +36,11 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <FrameLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </android.support.v4.widget.NestedScrollView>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_test"

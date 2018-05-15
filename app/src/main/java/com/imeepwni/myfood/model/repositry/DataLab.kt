@@ -1,11 +1,9 @@
 package com.imeepwni.myfood.model.repositry
 
+import com.imeepwni.myfood.app.CommonHelper.getObservableTransformer
 import com.imeepwni.myfood.model.data.GetMenuByTabBean
 import com.imeepwni.myfood.model.data.GetMenuTabsBean
 import com.imeepwni.myfood.model.net.MobService
-import io.reactivex.ObservableTransformer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 object DataLab {
 
@@ -29,7 +27,7 @@ object DataLab {
      */
     private inline fun getMenuTabsFromNet(crossinline handleTabs: (GetMenuTabsBean?) -> Unit) {
         MobService.getMenuTabs()
-                .compose(getAndroidRxJavaTransformer())
+                .compose(getObservableTransformer())
                 .doFinally {
                     handleTabs(sMenuTabs)
                 }
@@ -43,23 +41,11 @@ object DataLab {
     }
 
     /**
-     * 设置RxJava相关线程
-     * 简化Android RxJava操作
-     */
-    private fun <T> getAndroidRxJavaTransformer(): ObservableTransformer<T, T> {
-        return ObservableTransformer { upstream ->
-            upstream.subscribeOn(Schedulers.io())
-                    .unsubscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-        }
-    }
-
-    /**
      * 根据菜单标签获取菜单
      */
     fun getMenuByTab(map: MutableMap<String, String>, handleMenus: (GetMenuByTabBean?) -> Unit) {
         MobService.getMenuByTab(map)
-                .compose(getAndroidRxJavaTransformer())
+                .compose(getObservableTransformer())
                 .subscribe({
                     handleMenus(it)
                 }, {

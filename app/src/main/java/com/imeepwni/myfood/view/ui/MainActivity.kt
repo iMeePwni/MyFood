@@ -59,7 +59,7 @@ class MainActivity : BaseActivity() {
         setSupportActionBar(mToolBar)
 
         mSectionAdapter.addSection(TAG_MENU_CONTENT, mMenuAdapter)
-        mRVContent.run {
+        mRVTestBean.run {
             layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
             itemAnimator = DefaultItemAnimator()
             adapter = mSectionAdapter

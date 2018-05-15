@@ -1,0 +1,142 @@
+package com.imeepwni.myfood.model.datasource
+
+import android.arch.paging.PageKeyedDataSource
+import com.imeepwni.myfood.app.MyApplication
+import com.imeepwni.myfood.model.data.Menu
+import com.imeepwni.myfood.model.data.MenuResult
+import com.imeepwni.myfood.model.net.MobService
+import com.orhanobut.logger.Logger
+import org.jetbrains.anko.toast
+
+/**
+ * 根据标签获取菜单的DataSource
+ */
+class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataSource<Int, Menu>() {
+
+    /**
+     * 请求参数Map
+     */
+    private lateinit var mRequestMap: MutableMap<String, String>
+
+    /**
+     * 当前页页码
+     */
+    private var currentPage = 1
+
+    /**
+     * 上一页页码
+     */
+    private var previousPage = currentPage - 1
+
+    /**
+     * 下一页页码
+     */
+    private var nextPage = currentPage + 1
+
+    /**
+     * 当前加载的数据量
+     */
+    private var currentLoadedSize = 0
+
+    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Menu>) {
+        initPageData(params)
+
+        MobService.getMenuByTab(mRequestMap)
+                .subscribe({
+                    val menuResult: MenuResult? = it.result
+                    if (it.retCode != MobService.RESULT_OK || menuResult == null) {
+                        MyApplication.INSTANCE.toast(it.msg)
+                    } else {
+                        val list = menuResult.list
+                        currentLoadedSize = list.size
+                        val isHaveNextPage = currentLoadedSize < menuResult.total
+                        if (isHaveNextPage) {
+                            callback.onResult(list, null, nextPage)
+                        } else {
+                            callback.onResult(list, null, null)
+                        }
+                    }
+                }, {
+                    Logger.d(it)
+                })
+    }
+
+    /**
+     * 初始化请求参数
+     */
+    private fun initPageData(params: LoadInitialParams<Int>) {
+        val requestedLoadSize = params.requestedLoadSize
+        // 初始化加载多页
+        nextPage = currentPage + requestedLoadSize / MobService.DEFAULT_PAGE_SIZE
+        mRequestMap = HashMap()
+        mRequestMap[MobService.KEY_CID] = cid
+        mRequestMap[MobService.KEY_PAGE_NUM] = currentPage.toString()
+        mRequestMap[MobService.KEY_PER_PAGE_SIZE] = requestedLoadSize.toString()
+    }
+
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Menu>) {
+        loadPage(nextPage, callback)
+    }
+
+    /**
+     * 加载对应页面数据
+     *
+     * @param page 要加载的页码
+     */
+    private fun loadPage(page: Int, callback: LoadCallback<Int, Menu>) {
+        setPageData(page)
+
+        MobService.getMenuByTab(mRequestMap)
+                .subscribe({
+                    val menuResult = it.result
+                    if (it.retCode != MobService.RESULT_OK || menuResult == null) {
+                        MyApplication.INSTANCE.toast(it.msg)
+                    } else {
+                        val list = menuResult.list
+                        val currentLoadedSize = page * MobService.DEFAULT_PAGE_SIZE + list.size
+                        val isHaveNextPage = currentLoadedSize < menuResult.total
+                        if (isHaveNextPage) {
+                            callback.onResult(list, page)
+                        } else {
+                            callback.onResult(list, null)
+                        }
+                    }
+                }, {
+                    Logger.d(it)
+                })
+    }
+
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Menu>) {
+        loadPage(previousPage, callback)
+    }
+
+    /**
+     * 设置页码相关数据
+     */
+    private fun setPageData(page: Int) {
+        currentPage = page
+        previousPage = currentPage - 1
+        nextPage = currentPage + 1
+        mRequestMap[MobService.KEY_PER_PAGE_SIZE] = MobService.DEFAULT_PAGE_SIZE.toString()
+        mRequestMap[MobService.KEY_PAGE_NUM] = currentPage.toString()
+    }
+
+    companion object {
+
+        /**
+         * 获取查询全部标签的DataSource实例
+         */
+        fun newInstance(): SimpleMenuDataSource {
+            return SimpleMenuDataSource("")
+        }
+
+        /**
+         * 获取查询指定标签的DataSource实例
+         *
+         * @param cid 指定标签ID
+         */
+        fun newInstance(cid: String): SimpleMenuDataSource {
+            return SimpleMenuDataSource(cid)
+        }
+    }
+}

@@ -4,12 +4,6 @@
         android:id="@+id/menu_show_tab"
         android:title="SHOW TAB" />
     <item
-        android:id="@+id/menu_chaos"
-        android:title="CHAOS" />
-    <item
-        android:id="@+id/menu_load_more"
-        android:title="LOAD MORE" />
-    <item
         android:id="@+id/menu_test"
         android:title="TEST" />
 </menu>

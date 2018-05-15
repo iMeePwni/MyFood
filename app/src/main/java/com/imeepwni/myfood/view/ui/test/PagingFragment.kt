@@ -142,7 +142,7 @@ class PagingFragment : BaseFragment() {
             /**
              * 第一次加载的数据
              */
-            const val FIRST_LOAD_SIZE = 50
+            const val FIRST_LOAD_SIZE = PER_PAGE_SIZE * 2
 
             /**
              * 获取Adapter实例
@@ -177,18 +177,12 @@ class PagingFragment : BaseFragment() {
              * 数据对比
              */
             val itemCallback = object : DiffUtil.ItemCallback<Bean>() {
-                override fun areItemsTheSame(oldItem: Bean?, newItem: Bean?): Boolean {
-                    return when {
-                        oldItem != null && newItem != null -> oldItem.id == newItem.id
-                        else -> oldItem == null && newItem == null
-                    }
+                override fun areItemsTheSame(oldItem: Bean, newItem: Bean): Boolean {
+                    return oldItem.id == newItem.id
                 }
 
-                override fun areContentsTheSame(oldItem: Bean?, newItem: Bean?): Boolean {
-                    return when {
-                        oldItem != null && newItem != null -> oldItem == newItem
-                        else -> oldItem == null && newItem == null
-                    }
+                override fun areContentsTheSame(oldItem: Bean, newItem: Bean): Boolean {
+                    return oldItem == newItem
                 }
             }
         }

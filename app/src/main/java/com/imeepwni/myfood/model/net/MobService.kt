@@ -27,14 +27,14 @@ object MobService {
     const val KEY_NAME = "name"
 
     /**
-     * 起始页 对应KEY
+     * 页码 对应KEY
      */
-    const val KEY_PAGE = "page"
+    const val KEY_PAGE_NUM = "page"
 
     /**
-     * 返回数据条数 对应KEY
+     * 每页Item数量 对应KEY
      */
-    const val KEY_SIZE = "size"
+    const val KEY_PER_PAGE_SIZE = "size"
 
     /**
      * 菜单ID 对应KEY
@@ -96,8 +96,8 @@ object MobService {
          *
          * @see KEY_CID
          * @see KEY_NAME
-         * @see KEY_PAGE
-         * @see KEY_SIZE
+         * @see KEY_PAGE_NUM
+         * @see KEY_PER_PAGE_SIZE
          */
         @GET("v1/cook/menu/search")
         fun getMenuByTabs(@QueryMap param: Map<String, String>): Observable<GetMenuByTabBean>

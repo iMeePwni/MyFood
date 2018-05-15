@@ -1,7 +1,9 @@
 package com.imeepwni.myfood.view.holder
 
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.imeepwni.myfood.R
@@ -12,7 +14,7 @@ import com.squareup.picasso.Picasso
 /**
  * 菜谱简介ViewHolder
  */
-class SimpleMenuViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class SimpleMenuViewHolder private constructor(view: View) : RecyclerView.ViewHolder(view) {
 
     /**
      * 菜单缩略图
@@ -49,6 +51,19 @@ class SimpleMenuViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 // TODO 增加过渡动画
                 MenuDetailActivity.startActivity(context, it.menuId)
             }
+        }
+    }
+
+    companion object {
+
+        /**
+         * 通过parent生成ViewHolder
+         *
+         * @param parent 父布局
+         */
+        fun create(parent: ViewGroup): SimpleMenuViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_simpel_menu, parent, false)
+            return SimpleMenuViewHolder(view)
         }
     }
 }

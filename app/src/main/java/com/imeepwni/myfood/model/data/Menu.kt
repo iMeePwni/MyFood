@@ -21,7 +21,7 @@ data class Menu(val ctgIds: List<String>,
     companion object {
 
         /**
-         * 获取新旧数据比较回调
+         * 获取数据类的DiffUtil.Callback
          *
          * @param oldList 旧数据
          * @param newList 新数据
@@ -44,6 +44,19 @@ data class Menu(val ctgIds: List<String>,
                 override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                     return oldList[oldItemPosition] == newList[newItemPosition]
                 }
+            }
+        }
+
+        /**
+         * 获取数据类的DiffUtil.ItemCallback
+         */
+        val diffUtilItemCallback: DiffUtil.ItemCallback<Menu> = object : DiffUtil.ItemCallback<Menu>() {
+            override fun areItemsTheSame(oldItem: Menu, newItem: Menu): Boolean {
+                return oldItem.menuId == newItem.menuId
+            }
+
+            override fun areContentsTheSame(oldItem: Menu, newItem: Menu): Boolean {
+                return oldItem == newItem
             }
         }
     }

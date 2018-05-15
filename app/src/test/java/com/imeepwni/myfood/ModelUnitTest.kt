@@ -54,8 +54,8 @@ class ModelUnitTest {
         val param = HashMap<String, String>()
         param[MobService.KEY_CID] = "0010001007"
         param[MobService.KEY_NAME] = "红烧肉"
-        param[MobService.KEY_PAGE] = "1"
-        param[MobService.KEY_SIZE] = MobService.DEFAULT_PAGE_SIZE.toString()
+        param[MobService.KEY_PAGE_NUM] = "1"
+        param[MobService.KEY_PER_PAGE_SIZE] = MobService.DEFAULT_PAGE_SIZE.toString()
 
         MobService.getMenuByTab(param)
                 .subscribe {

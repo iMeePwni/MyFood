@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.imeepwni.myfood.R
 import com.imeepwni.myfood.model.data.Menu
 import com.imeepwni.myfood.view.ui.MenuDetailActivity
+import com.orhanobut.logger.Logger
 import com.squareup.picasso.Picasso
 
 /**
@@ -34,8 +35,8 @@ class SimpleMenuViewHolder private constructor(view: View) : RecyclerView.ViewHo
     /**
      * 绑定菜单数据
      */
-    fun bind(menu: Menu) {
-        menu.let {
+    fun bind(menu: Menu?) {
+        menu?.let {
             val context = itemView.context
             Picasso.with(context)
 //                    .load(it.recipe.img)
@@ -51,7 +52,7 @@ class SimpleMenuViewHolder private constructor(view: View) : RecyclerView.ViewHo
                 // TODO 增加过渡动画
                 MenuDetailActivity.startActivity(context, it.menuId)
             }
-        }
+        } ?: Logger.d("bind null")
     }
 
     companion object {

@@ -19,6 +19,7 @@ import com.imeepwni.myfood.view.adapter.SimpleMenuAdapter
 import com.imeepwni.myfood.view.ui.test.TestActivity
 import io.reactivex.BackpressureStrategy
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.toast
 
 /**
  * 主界面
@@ -67,7 +68,9 @@ class MainActivity : BaseActivity() {
         mRVSimpleMenu.adapter = simpleMenuAdapter
         val dataSourceFactory: DataSource.Factory<Int, Menu> = object : DataSource.Factory<Int, Menu>() {
             override fun create(): DataSource<Int, Menu> {
-                return SimpleMenuDataSource.newInstance()
+                return SimpleMenuDataSource.newInstance().apply {
+                    mPageAdapter = simpleMenuAdapter
+                }
             }
         }
         val config = PagedList.Config.Builder()
@@ -75,7 +78,19 @@ class MainActivity : BaseActivity() {
                 .setPageSize(MobService.DEFAULT_PAGE_SIZE)
                 .setEnablePlaceholders(false)
                 .build()
-        val flowable = RxPagedListBuilder<Int, Menu>(dataSourceFactory, config).buildFlowable(BackpressureStrategy.BUFFER)
+        val flowable = RxPagedListBuilder<Int, Menu>(dataSourceFactory, config)
+                .setBoundaryCallback(object : PagedList.BoundaryCallback<Menu>() {
+                    override fun onZeroItemsLoaded() {
+                        super.onZeroItemsLoaded()
+                        toast("Net Error")
+                    }
+
+                    override fun onItemAtEndLoaded(itemAtEnd: Menu) {
+                        super.onItemAtEndLoaded(itemAtEnd)
+                        toast("No More Data")
+                    }
+                })
+                .buildFlowable(BackpressureStrategy.BUFFER)
         mCompositeDisposable.add(flowable.subscribe {
             simpleMenuAdapter.submitList(it)
         })

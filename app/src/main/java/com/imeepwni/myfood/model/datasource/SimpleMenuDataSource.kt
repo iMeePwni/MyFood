@@ -1,17 +1,31 @@
 package com.imeepwni.myfood.model.datasource
 
 import android.arch.paging.PageKeyedDataSource
+import android.view.View
 import com.imeepwni.myfood.app.MyApplication
 import com.imeepwni.myfood.model.data.Menu
 import com.imeepwni.myfood.model.data.MenuResult
+import com.imeepwni.myfood.model.data.NetWorkState
 import com.imeepwni.myfood.model.net.MobService
+import com.imeepwni.myfood.view.adapter.SimpleMenuAdapter
 import com.orhanobut.logger.Logger
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
 
 /**
  * 根据标签获取菜单的DataSource
+ *
+ * // TODO 页码待优化 方法有缺陷
  */
-class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataSource<Int, Menu>() {
+class SimpleMenuDataSource private constructor(private val cid: String) : PageKeyedDataSource<Int, Menu>() {
+
+    /**
+     * 当前数据网络请求状况
+     */
+    private lateinit var mNetworkState: NetWorkState
+
+    var mPageAdapter: SimpleMenuAdapter? = null
 
     /**
      * 请求参数Map
@@ -40,12 +54,23 @@ class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataS
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Menu>) {
         initPageData(params)
+        mNetworkState = NetWorkState.LOADING
+        updateAdapterNetworkState()
 
         MobService.getMenuByTab(mRequestMap)
+                .doFinally {
+                    mPageAdapter?.mRetryCallback = View.OnClickListener {
+                        doAsync {
+                            loadInitial(params, callback)
+                        }
+                    }
+                    updateAdapterNetworkState()
+                }
                 .subscribe({
                     val menuResult: MenuResult? = it.result
-                    if (it.retCode != MobService.RESULT_OK || menuResult == null) {
+                    mNetworkState = if (it.retCode != MobService.RESULT_OK || menuResult == null) {
                         MyApplication.INSTANCE.toast(it.msg)
+                        NetWorkState.error(it.msg)
                     } else {
                         val list = menuResult.list
                         currentLoadedSize = list.size
@@ -55,10 +80,21 @@ class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataS
                         } else {
                             callback.onResult(list, null, null)
                         }
+                        NetWorkState.LOADED
                     }
                 }, {
                     Logger.d(it)
+                    mNetworkState = NetWorkState.error(it.toString())
                 })
+    }
+
+    /**
+     * 更新Adapter网络状态
+     */
+    private fun updateAdapterNetworkState() {
+        MyApplication.INSTANCE.runOnUiThread {
+            mPageAdapter?.setNetworkState(mNetworkState)
+        }
     }
 
     /**
@@ -75,7 +111,11 @@ class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataS
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Menu>) {
-        loadPage(nextPage, callback)
+        loadPage(params.key, callback, View.OnClickListener {
+            doAsync {
+                loadAfter(params, callback)
+            }
+        })
     }
 
     /**
@@ -83,14 +123,20 @@ class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataS
      *
      * @param page 要加载的页码
      */
-    private fun loadPage(page: Int, callback: LoadCallback<Int, Menu>) {
+    private fun loadPage(page: Int, callback: LoadCallback<Int, Menu>, retryCallback: View.OnClickListener) {
         setPageData(page)
+        mNetworkState = NetWorkState.LOADING
 
         MobService.getMenuByTab(mRequestMap)
+                .doFinally {
+                    mPageAdapter?.mRetryCallback = retryCallback
+                    updateAdapterNetworkState()
+                }
                 .subscribe({
                     val menuResult = it.result
-                    if (it.retCode != MobService.RESULT_OK || menuResult == null) {
+                    mNetworkState = if (it.retCode != MobService.RESULT_OK || menuResult == null) {
                         MyApplication.INSTANCE.toast(it.msg)
+                        NetWorkState.error(it.msg)
                     } else {
                         val list = menuResult.list
                         val currentLoadedSize = page * MobService.DEFAULT_PAGE_SIZE + list.size
@@ -100,14 +146,20 @@ class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataS
                         } else {
                             callback.onResult(list, null)
                         }
+                        NetWorkState.LOADED
                     }
                 }, {
                     Logger.d(it)
+                    mNetworkState = NetWorkState.error(it.toString())
                 })
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Menu>) {
-        loadPage(previousPage, callback)
+        loadPage(previousPage, callback, View.OnClickListener {
+            doAsync {
+                loadBefore(params, callback)
+            }
+        })
     }
 
     /**
@@ -127,7 +179,8 @@ class SimpleMenuDataSource private constructor(val cid: String) : PageKeyedDataS
          * 获取查询全部标签的DataSource实例
          */
         fun newInstance(): SimpleMenuDataSource {
-            return SimpleMenuDataSource("")
+            val defaultCid = ""
+            return newInstance(defaultCid)
         }
 
         /**

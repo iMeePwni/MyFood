@@ -15,8 +15,6 @@ import org.jetbrains.anko.toast
 
 /**
  * 根据标签获取菜单的DataSource
- *
- * // TODO 页码待优化 方法有缺陷
  */
 class SimpleMenuDataSource private constructor(private val cid: String) : PageKeyedDataSource<Int, Menu>() {
 
@@ -33,27 +31,18 @@ class SimpleMenuDataSource private constructor(private val cid: String) : PageKe
     private lateinit var mRequestMap: MutableMap<String, String>
 
     /**
-     * 当前页页码
-     */
-    private var currentPage = 1
-
-    /**
-     * 上一页页码
-     */
-    private var previousPage = currentPage - 1
-
-    /**
-     * 下一页页码
-     */
-    private var nextPage = currentPage + 1
-
-    /**
      * 当前加载的数据量
      */
     private var currentLoadedSize = 0
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Menu>) {
-        initPageData(params)
+        val requestedLoadSize = params.requestedLoadSize
+        // 初始化加载多页
+        mRequestMap = HashMap()
+        mRequestMap[MobService.KEY_CID] = cid
+        mRequestMap[MobService.KEY_PAGE_NUM] = 1.toString()
+        mRequestMap[MobService.KEY_PER_PAGE_SIZE] = requestedLoadSize.toString()
+
         mNetworkState = NetWorkState.LOADING
         updateAdapterNetworkState()
 
@@ -76,7 +65,7 @@ class SimpleMenuDataSource private constructor(private val cid: String) : PageKe
                         currentLoadedSize = list.size
                         val isHaveNextPage = currentLoadedSize < menuResult.total
                         if (isHaveNextPage) {
-                            callback.onResult(list, null, nextPage)
+                            callback.onResult(list, null, 1 + params.requestedLoadSize / MobService.DEFAULT_PAGE_SIZE)
                         } else {
                             callback.onResult(list, null, null)
                         }
@@ -97,21 +86,8 @@ class SimpleMenuDataSource private constructor(private val cid: String) : PageKe
         }
     }
 
-    /**
-     * 初始化请求参数
-     */
-    private fun initPageData(params: LoadInitialParams<Int>) {
-        val requestedLoadSize = params.requestedLoadSize
-        // 初始化加载多页
-        nextPage = currentPage + requestedLoadSize / MobService.DEFAULT_PAGE_SIZE
-        mRequestMap = HashMap()
-        mRequestMap[MobService.KEY_CID] = cid
-        mRequestMap[MobService.KEY_PAGE_NUM] = currentPage.toString()
-        mRequestMap[MobService.KEY_PER_PAGE_SIZE] = requestedLoadSize.toString()
-    }
-
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Menu>) {
-        loadPage(params.key, callback, View.OnClickListener {
+        loadPage(params.key, true, callback, View.OnClickListener {
             doAsync {
                 loadAfter(params, callback)
             }
@@ -123,10 +99,11 @@ class SimpleMenuDataSource private constructor(private val cid: String) : PageKe
      *
      * @param page 要加载的页码
      */
-    private fun loadPage(page: Int, callback: LoadCallback<Int, Menu>, retryCallback: View.OnClickListener) {
-        setPageData(page)
-        mNetworkState = NetWorkState.LOADING
+    private fun loadPage(page: Int, isLoadAfter: Boolean, callback: LoadCallback<Int, Menu>, retryCallback: View.OnClickListener) {
+        mRequestMap[MobService.KEY_PER_PAGE_SIZE] = MobService.DEFAULT_PAGE_SIZE.toString()
+        mRequestMap[MobService.KEY_PAGE_NUM] = page.toString()
 
+        mNetworkState = NetWorkState.LOADING
         MobService.getMenuByTab(mRequestMap)
                 .doFinally {
                     mPageAdapter?.mRetryCallback = retryCallback
@@ -142,7 +119,7 @@ class SimpleMenuDataSource private constructor(private val cid: String) : PageKe
                         val currentLoadedSize = page * MobService.DEFAULT_PAGE_SIZE + list.size
                         val isHaveNextPage = currentLoadedSize < menuResult.total
                         if (isHaveNextPage) {
-                            callback.onResult(list, page)
+                            callback.onResult(list, if (isLoadAfter) page + 1 else page - 1)
                         } else {
                             callback.onResult(list, null)
                         }
@@ -155,22 +132,11 @@ class SimpleMenuDataSource private constructor(private val cid: String) : PageKe
     }
 
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Menu>) {
-        loadPage(previousPage, callback, View.OnClickListener {
+        loadPage(params.key, false, callback, View.OnClickListener {
             doAsync {
                 loadBefore(params, callback)
             }
         })
-    }
-
-    /**
-     * 设置页码相关数据
-     */
-    private fun setPageData(page: Int) {
-        currentPage = page
-        previousPage = currentPage - 1
-        nextPage = currentPage + 1
-        mRequestMap[MobService.KEY_PER_PAGE_SIZE] = MobService.DEFAULT_PAGE_SIZE.toString()
-        mRequestMap[MobService.KEY_PAGE_NUM] = currentPage.toString()
     }
 
     companion object {
